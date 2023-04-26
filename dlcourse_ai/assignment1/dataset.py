@@ -24,7 +24,7 @@ def load_data_mat(filename, max_samples, seed=42):
                                max_samples,
                                replace=False)
     
-    return X[samples].astype(np.float32), y[samples]
+    return X[samples].astype(np.float64), y[samples]
 
 
 def load_svhn(folder, max_train, max_test):
