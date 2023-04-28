@@ -40,7 +40,7 @@ def check_gradient(f, x, delta=1e-5, tol = 1e-4):
         ix = it.multi_index
         analytic_grad_at_ix = analytic_grad[ix]
         numeric_grad_at_ix = 0
-        print("ix", ix)
+        # print("ix", ix)
         # print("analytic_grad_at_ix", analytic_grad_at_ix)
         
         
