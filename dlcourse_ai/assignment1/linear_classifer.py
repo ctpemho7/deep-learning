@@ -65,7 +65,10 @@ def softmax_with_cross_entropy(predictions, target_index):
     # TODO implement softmax with cross-entropy
     # Your final implementation shouldn't have any loops
     raise Exception("Not implemented!")
-
+    
+    softmaxed_probs = softmax(predictions)
+    loss = cross_entropy_loss(softmaxed_probs, target_index)
+    
     return loss, dprediction
 
 
@@ -85,7 +88,10 @@ def l2_regularization(W, reg_strength):
     # TODO: implement l2 regularization and gradient
     # Your final implementation shouldn't have any loops
     raise Exception("Not implemented!")
-
+    # l2_reg_loss = reg_strength * sumij W[i, j]2
+    
+    l2_reg_loss = reg_strength * (W @ W.T).sum()
+    
     return loss, grad
     
 
