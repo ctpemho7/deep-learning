@@ -17,11 +17,13 @@ def check_gradient(f, x, delta=1e-5, tol = 1e-4):
     '''
     
     assert isinstance(x, np.ndarray)
-    assert x.dtype == np.float64
+    assert x.dtype == float
     
     orig_x = x.copy()
     fx, analytic_grad = f(x)
     
+    # print("orig_x", orig_x)
+    # print("x", x)
     assert np.all(np.isclose(orig_x, x, tol)), "Functions shouldn't modify input variables"
 
     assert analytic_grad.shape == x.shape
@@ -46,10 +48,19 @@ def check_gradient(f, x, delta=1e-5, tol = 1e-4):
         
         # TODO compute value of numeric gradient of f to idx
   
-        x[ix] += delta
-        fx_plus = f(x)
-        x[ix] -= 2*delta
-        fx_minus = f(x)
+        # x[ix] += delta
+        # fx_plus = f(x)
+        # x[ix] -= 2*delta
+        # fx_minus = f(x)
+        
+        # создаём пустой массив          
+        delta_at_ix = np.zeros_like(x)
+        # прибавляем дельту к этому измерению
+        delta_at_ix[ix] += delta
+        # считаем f(x+d) и f(x-d) по этому измерению
+        fx_minus = f(x - delta_at_ix)
+        fx_plus = f(x + delta_at_ix)
+        
         numeric_grad_at_ix = np.divide((fx_plus[0] - fx_minus[0]), 2*delta)
 
         # print("fx_plus_d", fx_plus_d)

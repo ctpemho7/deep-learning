@@ -13,9 +13,33 @@ def softmax(predictions):
       probs, np array of the same shape as predictions - 
         probability for every class, 0..1
     '''
-    predictions -= np.max(predictions)
-    exp = np.exp(predictions)
-    output = exp / exp.sum()
+    
+    def exp_and_sum(x):
+        exp = np.exp(x)
+        # суммируем по строкам     
+        summ = exp.sum(axis=x.ndim-1)
+        return exp, summ
+    
+    
+    # получаем максимум разным способом в зависимости от dim     
+    if  predictions.ndim == 1:
+        new_predictions = predictions - np.max(predictions)
+        exp, summ = exp_and_sum(new_predictions)
+        output = exp / summ
+        
+    else:
+        maximum = np.max(predictions, axis=1)
+        
+        # добавляем новую axis, чтобы избежать ошибки  
+        # ValueError: operands could not be broadcast together with shapes (2,3) (2,) 
+        new_predictions = predictions - maximum[:, np.newaxis]
+        # другой вариант: сделать maximum.reshape((-1, 1))
+        # это позволит увел        
+
+        
+        exp, summ = exp_and_sum(new_predictions)                
+        output = exp / summ[:, np.newaxis]
+
     return output
 
 
@@ -32,8 +56,7 @@ def cross_entropy_loss(probs, target_index):
     Returns:
       loss: single value
     '''
-    # TODO implement cross-entropy
-    # Your final implementation shouldn't have any loops
+
     target_distribution = np.zeros_like(probs)
     # для одномерного
     if type(target_index) == int:
@@ -42,11 +65,11 @@ def cross_entropy_loss(probs, target_index):
         # n-мерное     
         target_distribution[np.arange(len(target_index)), target_index.reshape(-1)] = 1
     
-    output = -np.sum(target_distribution * np.log(probs)) / probs.shape[0] 
+    output = -np.sum(target_distribution * np.log(probs)) #/ probs.shape[0] 
     
     return output
     
-
+    
 def softmax_with_cross_entropy(predictions, target_index):
     '''
     Computes softmax and cross-entropy loss for model predictions,
@@ -64,10 +87,20 @@ def softmax_with_cross_entropy(predictions, target_index):
     '''
     # TODO implement softmax with cross-entropy
     # Your final implementation shouldn't have any loops
-    raise Exception("Not implemented!")
     
-    softmaxed_probs = softmax(predictions)
-    loss = cross_entropy_loss(softmaxed_probs, target_index)
+    target_distribution = np.zeros_like(predictions)
+    # для одномерного
+    if type(target_index) == int:
+        target_distribution[target_index] = 1
+    else:
+        # n-мерное     
+        target_distribution[np.arange(len(target_index)), target_index.reshape(-1)] = 1
+    
+    dprediction = softmax(predictions)
+    # dprediction[target_distribution.astype(bool)] = dprediction[target_distribution.astype(bool)]-1
+    
+    loss = cross_entropy_loss(dprediction, target_index)
+    dprediction[target_distribution.astype(bool)] = dprediction[target_distribution.astype(bool)]-1
     
     return loss, dprediction
 
@@ -87,11 +120,10 @@ def l2_regularization(W, reg_strength):
 
     # TODO: implement l2 regularization and gradient
     # Your final implementation shouldn't have any loops
-    raise Exception("Not implemented!")
     # l2_reg_loss = reg_strength * sumij W[i, j]2
     
-    l2_reg_loss = reg_strength * (W @ W.T).sum()
-    
+    loss = reg_strength * (W @ W.T)
+    grad = reg_strength*2*W
     return loss, grad
     
 
