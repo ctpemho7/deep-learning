@@ -55,10 +55,12 @@ class ReLULayer:
         pass
 
     def forward(self, X):
+        self.orig_X = X.copy()
+        
+        return np.where(X > 0, X, 0)
         # TODO: Implement forward pass
         # Hint: you'll need to save some information about X
         # to use it later in the backward pass
-        raise Exception("Not implemented!")
 
     def backward(self, d_out):
         """
@@ -72,9 +74,9 @@ class ReLULayer:
         d_result: np array (batch_size, num_features) - gradient
           with respect to input
         """
-        # TODO: Implement backward pass
-        # Your final implementation shouldn't have any loops
-        raise Exception("Not implemented!")
+
+        mask = np.where(self.orig_X >= 0, 1, 0)
+        d_result = mask * d_out
         return d_result
 
     def params(self):
@@ -89,9 +91,10 @@ class FullyConnectedLayer:
         self.X = None
 
     def forward(self, X):
-        # TODO: Implement forward pass
-        # Your final implementation shouldn't have any loops
-        raise Exception("Not implemented!")
+        self.X = Param(X)
+        
+        return self.X.value @ self.W.value + self.B.value
+        
 
     def backward(self, d_out):
         """
@@ -111,7 +114,9 @@ class FullyConnectedLayer:
         # Compute both gradient with respect to input
         # and gradients with respect to W and B
         # Add gradients of W and B to their `grad` attribute
-
+        
+        # должен вернуть (dX, dW, db)         
+        
         # It should be pretty similar to linear classifier from
         # the previous assignment
 

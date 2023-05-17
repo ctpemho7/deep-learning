@@ -65,7 +65,7 @@ def cross_entropy_loss(probs, target_index):
         # n-мерное     
         target_distribution[np.arange(len(target_index)), target_index.reshape(-1)] = 1
     
-    output = -np.sum(target_distribution * np.log(probs)) # / probs.shape[0] 
+    output = -np.sum(target_distribution * np.log(probs)) #/ probs.shape[0] 
     
     return output
     
